@@ -4,20 +4,25 @@ const path = require("path");
 
 const Webidl2js = require("webidl2js");
 
-const transformer = new Webidl2js();
-transformer.options.suppressErrors = true;
-transformer.options.implSuffix = "-impl";
+const transformer = new Webidl2js({
+  implSuffix: "-impl",
+  suppressErrors: true
+});
 
 function addDir(dir) {
   const resolved = path.resolve(__dirname, dir);
   transformer.addSource(resolved, resolved);
 }
 
-addDir(path.resolve(__dirname, "../../lib/jsdom/living/traversal"));
-addDir(path.resolve(__dirname, "../../lib/jsdom/living/events"));
-addDir(path.resolve(__dirname, "../../lib/jsdom/living/attributes"));
-addDir(path.resolve(__dirname, "../../lib/jsdom/living/window"));
-addDir(path.resolve(__dirname, "../../lib/jsdom/living/nodes"));
-addDir(path.resolve(__dirname, "../../lib/jsdom/living/navigator"));
+addDir("../../lib/jsdom/living/traversal");
+addDir("../../lib/jsdom/living/events");
+addDir("../../lib/jsdom/living/attributes");
+addDir("../../lib/jsdom/living/window");
+addDir("../../lib/jsdom/living/nodes");
+addDir("../../lib/jsdom/living/navigator");
 
-transformer.generate(path.resolve(__dirname, "../../lib/jsdom/living/generated/")).done();
+transformer.generate(path.resolve(__dirname, "../../lib/jsdom/living/generated/"))
+  .catch ((err => {
+    console.error(err);
+    process.exit(1);
+  }));
